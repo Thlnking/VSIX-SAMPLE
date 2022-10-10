@@ -1,9 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require("vscode");
-const fs_1 = require("fs");
-const execSync = require("child_process").execSync;
-
+const gitUser = require("./src/git_message/git_user");
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 
@@ -22,20 +20,10 @@ function activate(context) {
     "vsix-sample.ToolTip",
     async function () {
       // The code you place here will be executed every time your command is executed
-
+      const git_user = gitUser();
+      console.log(git_user);
       // Display a message box to the user
-      vscode.window.showInformationMessage("Hello VS Code from vsix-sample!");
-      let name = await execSync("git show -s --format=%cn", {
-        cwd: vscode.workspace.workspaceFolders[0].uri.path,
-      })
-        .toString()
-        .trim(); //姓名
-      let email = await execSync("git show -s --format=%ce", {
-        cwd: vscode.workspace.workspaceFolders[0].uri.path,
-      })
-        .toString()
-        .trim(); //邮箱
-      console.log(name, email);
+      vscode.window.showInformationMessage(JSON.stringify(git_user));
     }
   );
 
