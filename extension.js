@@ -38,7 +38,6 @@ function activate(context) {
   context.subscriptions.push(
     vscode.commands.registerCommand(myCommandId, async () => {
       const n = getNumberOfSelectedLines(vscode.window.activeTextEditor);
-
       vscode.window.showInformationMessage(
         `Yeah, ${n} line(s) selected... Keep going!`
       );
