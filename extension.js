@@ -48,8 +48,8 @@ function activate(context) {
     vscode.StatusBarAlignment.Right,
     1
   );
-  myStatusBarItem.text = `Git: ${git_user.name}`;
-  myStatusBarItem.tooltip = `name: ${git_user.name}, email: ${git_user.email}, 配置类型: ${git_user.type}`;
+  myStatusBarItem.text = `$(github) ${git_user.name}`;
+  myStatusBarItem.tooltip = `name: ${git_user.name}\nemail: ${git_user.email}\n配置类型: ${git_user.type}`;
   myStatusBarItem.show();
   context.subscriptions.push(myStatusBarItem);
 }
