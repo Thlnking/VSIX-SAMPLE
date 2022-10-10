@@ -20,6 +20,13 @@
         "command": "vsix-sample.ToolTip",
         "title": "ToolTip"
       }
+    ],
+    "keybindings": [
+      {
+        "command": "vsix-sample.ToolTip",
+        "key": "shift+alt+l",
+        "mac": "shift+cmd+l"
+      }
     ]
   },
   "scripts": {
