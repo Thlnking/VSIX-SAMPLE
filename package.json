@@ -11,21 +11,26 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:vsix-sample.ToolTip"
+    "*"
   ],
   "main": "./extension.js",
   "contributes": {
     "commands": [
       {
         "command": "vsix-sample.ToolTip",
-        "title": "ToolTip"
+        "title": "提示当前项目的git账号信息",
+        "shortTitle": "git账号信息"
+      },
+      {
+        "command": "vsix-sample.showSelectionCount",
+        "title": "展示当前选择行"
       }
     ],
     "keybindings": [
       {
         "command": "vsix-sample.ToolTip",
-        "key": "shift+alt+l",
-        "mac": "shift+cmd+l"
+        "key": "shift+alt+i",
+        "mac": "shift+cmd+i"
       }
     ]
   },
