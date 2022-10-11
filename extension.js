@@ -2,9 +2,10 @@
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require("vscode");
 const gitUser = require("./src/git_message/git_user");
+const statusBarItem = require("./src/status_bar_item/index");
+const insertVariable = require("./src/insert_variable");
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
-let myStatusBarItem = null;
 /**
  * @param {vscode.ExtensionContext} context
  */
@@ -13,7 +14,6 @@ function activate(context) {
   // This line of code will only be executed once when your extension is activated
   console.log('Congratulations, your extension "vsix-sample" is now active!');
   const git_user = gitUser();
-  console.log(git_user);
   // context.subscriptions.push(
   //   vscode.window.onDidChangeActiveTextEditor(updateStatusBarItem)
   // );
@@ -33,52 +33,15 @@ function activate(context) {
     }
   );
   context.subscriptions.push(disposable);
+  const gitStatusText = `$(github) ${git_user.name}`;
+  const gitStatusTooltip = `账户名: ${git_user.name}\n邮箱: ${git_user.email}\n配置类型: ${git_user.type}`;
+  const myStatusBarItem = statusBarItem(gitStatusText, gitStatusTooltip);
+  const insertVariableCommand = insertVariable();
 
-  const myCommandId = "vsix-sample.showSelectionCount";
-  context.subscriptions.push(
-    vscode.commands.registerCommand(myCommandId, async () => {
-      const n = getNumberOfSelectedLines(vscode.window.activeTextEditor);
-      vscode.window.showInformationMessage(
-        `Yeah, ${n} line(s) selected... Keep going!`
-      );
-    })
-  );
-
-  myStatusBarItem = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Right,
-    1
-  );
-  myStatusBarItem.text = `$(github) ${git_user.name}`;
-  myStatusBarItem.tooltip = `name: ${git_user.name}\nemail: ${git_user.email}\n配置类型: ${git_user.type}`;
-  myStatusBarItem.show();
   context.subscriptions.push(myStatusBarItem);
+  context.subscriptions.push(insertVariableCommand);
 }
 
-function updateStatusBarItem() {
-  const n = getNumberOfSelectedLines(vscode.window.activeTextEditor);
-  console.log(
-    "%c [ n ]-19",
-    "font-size:13px; background:pink; color:#bf2c9f;",
-    n
-  );
-  if (n > 0) {
-    myStatusBarItem.text = `$(megaphone) ${n} line(s) selected`;
-    myStatusBarItem.show();
-  } else {
-    myStatusBarItem.hide();
-  }
-}
-
-function getNumberOfSelectedLines(editor) {
-  let lines = 0;
-  if (editor) {
-    lines = editor.selections.reduce(
-      (prev, curr) => prev + (curr.end.line - curr.start.line),
-      0
-    );
-  }
-  return lines;
-}
 // This method is called when your extension is deactivated
 function deactivate() {}
 

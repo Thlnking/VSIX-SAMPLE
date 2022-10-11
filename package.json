@@ -22,8 +22,9 @@
         "shortTitle": "git账号信息"
       },
       {
-        "command": "vsix-sample.showSelectionCount",
-        "title": "展示当前选择行"
+        "command": "vsix-sample.insertVariable",
+        "title": "添加console.log 打印语句",
+        "shortTitle": "console语句"
       }
     ],
     "keybindings": [
@@ -31,6 +32,12 @@
         "command": "vsix-sample.ToolTip",
         "key": "shift+alt+i",
         "mac": "shift+cmd+i"
+      },
+      {
+        "command": "vsix-sample.insertVariable",
+        "key": "shift+alt+l",
+        "mac": "shift+cmd+l",
+        "when": "editorTextFocus"
       }
     ]
   },
