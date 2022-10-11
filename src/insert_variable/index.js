@@ -6,13 +6,14 @@ const logStatementGenerator = (selectStatement, lineNumber) => {
 
   return [
     `console.table({name: '${git_user.name}', email: '${git_user.email}', type: '${git_user.type}'})`,
-    `console.log(\'%c [${selectStatement}, line: ${lineNumber}]\', 'font-size: 16px; font-color: #000; background: #e6e6e6', ${selectStatement}) `,
+    `console.log(\'⭐️⭐️⭐️⭐️⭐️%c line-${lineNumber} [${selectStatement}]->\', 'color:#fc6528', ${selectStatement}) `,
   ];
 };
 
 const handleInsertVariable = () => {
   const textEditor = window.activeTextEditor;
   const { selection, document } = textEditor;
+
   // 获取文本的位置信息
   const range =
     document.getWordRangeAtPosition(selection.anchor) ||
