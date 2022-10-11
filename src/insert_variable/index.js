@@ -5,8 +5,8 @@ const logStatementGenerator = (selectStatement, lineNumber) => {
   const git_user = gitUser();
 
   return [
-    `console.table({name: '${git_user.name}', email: '${git_user.email}', type: '${git_user.type}'})`,
-    `console.log(\'⭐️⭐️⭐️⭐️⭐️%c line-${lineNumber} [${selectStatement}]->\', 'color:#fc6528', ${selectStatement}) `,
+    // `console.table({name: '${git_user.name}', email: '${git_user.email}', type: '${git_user.type}'})`,
+    `console.log(\'⭐️⭐️${git_user.name}⭐️⭐️%c line-${lineNumber} [${selectStatement}]->\', 'color:#fc6528', ${selectStatement}) `,
   ];
 };
 
