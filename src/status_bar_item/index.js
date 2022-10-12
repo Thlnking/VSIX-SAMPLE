@@ -12,3 +12,4 @@ const gitStatusBarItem = (text, tooltip) => {
   return myStatusBarItem;
 };
 module.exports = gitStatusBarItem;
+ 
