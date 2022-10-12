@@ -1,16 +1,15 @@
-const { window, StatusBarAlignment, workspace } = require("vscode");
-const { execSync } = require("child_process");
+const { window, StatusBarAlignment } = require("vscode");
 const shell = require("shelljs");
+
 shell.config.execPath = shell.which("node").toString();
 const nvmStatusBarItem = () => {
   // const res = execSync("nvm -v", {
   //   cwd: workspace.workspaceFolders[0].uri.path,
   // }).toString();
-  // const res = shell.exec("zsh").toString();
+  const nodeVersion = shell.exec("node -v").toString();
 
-  // console.log("123123", res);
   const statusBarItem = window.createStatusBarItem(StatusBarAlignment.Right, 2);
-  statusBarItem.text = `$(versions) Node ----`;
+  statusBarItem.text = `$(versions) Node ${nodeVersion}`;
   statusBarItem.tooltip = "";
   statusBarItem.show();
   return statusBarItem;

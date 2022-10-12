@@ -16,16 +16,6 @@ const handleInsertVariable = () => {
 
   // 获取文本的位置信息 document.getWordRangeAtPosition(selection.anchor) ||
   const range = new Range(selection.start, selection.end);
-  console.log(
-    "⭐️⭐️Thlnking⭐️⭐️%c line-24 [range]->",
-    "color:#fc6528",
-    range
-  );
-  console.log(
-    "⭐️⭐️Thlnking⭐️⭐️%c line-24 [range]->",
-    "color:#fc6528",
-    range
-  );
 
   // 获取行号
   const lineNumber = range.start.line;
