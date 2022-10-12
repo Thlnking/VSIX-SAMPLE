@@ -1,6 +1,6 @@
 const vscode = require("vscode");
 
-const statusBarItem = (text, tooltip) => {
+const gitStatusBarItem = (text, tooltip) => {
   const myStatusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Right,
     1
@@ -11,4 +11,4 @@ const statusBarItem = (text, tooltip) => {
   myStatusBarItem.show();
   return myStatusBarItem;
 };
-module.exports = statusBarItem;
+module.exports = gitStatusBarItem;

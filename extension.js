@@ -2,8 +2,9 @@
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require("vscode");
 const gitUser = require("./src/git_message/git_user");
-const statusBarItem = require("./src/status_bar_item/index");
+const gitStatusBarItem = require("./src/status_bar_item/index");
 const insertVariable = require("./src/insert_variable");
+const nvmStatusBarItem = require("./src/nvm_status");
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 /**
@@ -35,11 +36,16 @@ function activate(context) {
   context.subscriptions.push(disposable);
   const gitStatusText = `$(github) ${git_user.name}`;
   const gitStatusTooltip = `账户名: ${git_user.name}\n邮箱: ${git_user.email}\n配置类型: ${git_user.type}`;
-  const myStatusBarItem = statusBarItem(gitStatusText, gitStatusTooltip);
+  const gitStatusBarItemCommand = gitStatusBarItem(
+    gitStatusText,
+    gitStatusTooltip
+  );
+  const nvmStatusBarItemCommand = nvmStatusBarItem();
   const insertVariableCommand = insertVariable();
 
-  context.subscriptions.push(myStatusBarItem);
+  context.subscriptions.push(gitStatusBarItemCommand);
   context.subscriptions.push(insertVariableCommand);
+  context.subscriptions.push(nvmStatusBarItemCommand);
 }
 
 // This method is called when your extension is deactivated
