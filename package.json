@@ -15,6 +15,35 @@
   ],
   "main": "./extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "process-explorer",
+          "title": "Node 进程管理器",
+          "icon": "media/Xbb.svg"
+        }
+      ]
+    },
+    "views": {
+      "process-explorer": [
+        {
+          "id": "NPM",
+          "name": "npm-process"
+        },
+        {
+          "id": "XBB-DEV",
+          "name": "xbb-dev-process"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "NPM.refreshEntry",
+          "group": "navigation@1"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "vsix-sample.ToolTip",
@@ -25,6 +54,14 @@
         "command": "vsix-sample.insertVariable",
         "title": "添加console.log 打印语句",
         "shortTitle": "console语句"
+      },
+      {
+        "command": "NPM.refreshEntry",
+        "title": "Refresh",
+        "icon": {
+          "light": "media/icon-dark.svg",
+          "dark": "media/icon-light.svg"
+        }
       }
     ],
     "keybindings": [

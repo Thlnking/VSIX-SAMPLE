@@ -12,17 +12,15 @@ const nvmStatusBarItem = () => {
     -99
   );
 
-  setInterval(() => {
-    const nodeVersion = shell
-      .exec("node -v", {
-        cwd: workspace.workspaceFolders[0].uri.path,
-      })
-      .toString();
+  const nodeVersion = shell
+    .exec("node -v", {
+      cwd: workspace.workspaceFolders[0].uri.path,
+    })
+    .toString();
 
-    statusBarItem.text = `$(versions) Node ${nodeVersion}`;
-    statusBarItem.tooltip = "";
-    statusBarItem.show();
-  }, 10 * 1000);
+  statusBarItem.text = `$(versions) Node ${nodeVersion}`;
+  statusBarItem.tooltip = "";
+  statusBarItem.show();
   return statusBarItem;
 };
 
