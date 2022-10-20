@@ -5,6 +5,7 @@ const gitUser = require("./src/git_message/git_user");
 const gitStatusBarItem = require("./src/status_bar_item/index");
 const insertVariable = require("./src/insert_variable");
 const nvmStatusBarItem = require("./src/nvm_status");
+const viewNPMDataProvider = require("./src/process_view_container");
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 /**
@@ -42,35 +43,10 @@ function activate(context) {
   );
   const nvmStatusBarItemCommand = nvmStatusBarItem();
   const insertVariableCommand = insertVariable();
-  const view = vscode.window.registerTreeDataProvider("NPM", {
-    getChildren: (element) => {
-      console.log(
-        "⭐️⭐️Thlnking⭐️⭐️%c line-48 [children element]->",
-        "color:#fc6528",
-        element
-      );
-    },
-    getTreeItem: (element) => {
-      console.log(
-        "⭐️⭐️Thlnking⭐️⭐️%c line-55 [treeItem element]->",
-        "color:#fc6528",
-        element
-      );
-    },
-    getParent: (element) => {
-      console.log(
-        "⭐️⭐️Thlnking⭐️⭐️%c line-62 [parent element]->",
-        "color:#fc6528",
-        element
-      );
-    },
-    refresh: () => {
-      console.log(
-        "⭐️⭐️Thlnking⭐️⭐️%c line-62 [refresh]->",
-        "color:#fc6528"
-      );
-    },
-  });
+  const view = vscode.window.registerTreeDataProvider(
+    "NPM",
+    viewNPMDataProvider()
+  );
   context.subscriptions.push(view);
   vscode.commands.registerCommand("NPM.refreshEntry", () => {
     console.log(
