@@ -43,16 +43,13 @@ function activate(context) {
   );
   const nvmStatusBarItemCommand = nvmStatusBarItem();
   const insertVariableCommand = insertVariable();
-  const view = vscode.window.registerTreeDataProvider(
-    "NPM",
-    viewNPMDataProvider()
-  );
-  context.subscriptions.push(view);
+
   vscode.commands.registerCommand("NPM.refreshEntry", () => {
-    console.log(
-      "⭐️⭐️Thlnking⭐️⭐️%c line-48 [NPM.refreshEntry]->",
-      "color:#fc6528"
+    const view = vscode.window.registerTreeDataProvider(
+      "NPM",
+      viewNPMDataProvider()
     );
+    context.subscriptions.push(view);
   });
   context.subscriptions.push(gitStatusBarItemCommand);
   context.subscriptions.push(insertVariableCommand);

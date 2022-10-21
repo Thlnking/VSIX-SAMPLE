@@ -2,34 +2,72 @@ const vscode = require("vscode");
 const path = require("path");
 const shelljs = require("shelljs");
 
+const interfaces = require("os").networkInterfaces(); //服务器本机地址
+const getIP = () => {
+  let IPAdress = "";
+
+  for (var devName in interfaces) {
+    var iface = interfaces[devName];
+    for (var i = 0; i < iface.length; i++) {
+      var alias = iface[i];
+
+      if (
+        alias.family === "IPv4" &&
+        alias.address !== "127.0.0.1" &&
+        !alias.internal &&
+        alias.netmask === "255.255.255.0"
+      ) {
+        IPAdress = alias.address;
+        return IPAdress;
+      }
+    }
+  }
+};
+
+const getNPMWebpackProcessesMsgArr = () => {
+  const npmWebpackProcesses = shelljs
+    .exec("ps au | grep node | grep webpack | grep dev")
+    .toString()
+    .split("\n")
+    .filter((item) => !!item.trim());
+  const npmWebpackProcessesMsgArr = npmWebpackProcesses
+    .map((item) => {
+      const parseArr = item.split(" ").filter((itm) => !!itm.trim());
+      return {
+        command: parseArr.slice(10).join(" "),
+        pid: parseArr[1],
+        startTime: parseArr[8],
+      };
+    })
+    .filter((item) => !!item);
+  return npmWebpackProcessesMsgArr;
+};
+
+const getWebpackDevServerUrl = (ProcessMsgArr) => {
+  const npmWebpackDevServerUrl = ProcessMsgArr.map((item) => {
+    const { pid, command } = item;
+    const lsofRes = shelljs
+      .exec(`lsof -nP | grep ${pid} | grep LISTEN`)
+      .toString();
+    const portMsgArr = lsofRes.split(" ").filter((item) => !!item.trim());
+    const port = portMsgArr[portMsgArr.length - 2].split(":")[1];
+    return {
+      url: `http://${getIP()}:${port}`,
+      pid,
+      command,
+    };
+  });
+  return npmWebpackDevServerUrl;
+};
+
 const viewNPMDataProvider = () => {
   return {
     getChildren: (element) => {
-      console.log(
-        "⭐️⭐️Thlnking⭐️⭐️%c line-8 [children element]->",
-        "color:#fc6528",
-        element
-      );
+      const processesMsgArr = getNPMWebpackProcessesMsgArr();
 
-      const res = shelljs
-        .exec("ps au | grep node | grep proxy")
-        .toString()
-        .split("\n");
-
-      const processMsgArr = res
-        .filter((item) => !!item.trim())
-        .map((item) => {
-          const parseArr = item.split(" ").filter((itm) => !!itm.trim());
-          return {
-            command: parseArr.slice(10).join(" "),
-            pid: parseArr[1],
-            startTime: parseArr[8],
-          };
-        })
-        .filter((item) => !!item);
-
-      const itemArr = processMsgArr.map((item) => {
-        const treeItem = new vscode.TreeItem(`进程ID：${item.pid}`);
+      const urlArr = getWebpackDevServerUrl(processesMsgArr);
+      const npmProcessItemArr = urlArr.map((item) => {
+        const treeItem = new vscode.TreeItem(`${item.url}`);
         treeItem.iconPath = path.join(
           __filename,
           "..",
@@ -38,26 +76,20 @@ const viewNPMDataProvider = () => {
           "media",
           "icon-dark.svg"
         );
-        treeItem.tooltip = `执行命令：${item.command}`;
+        treeItem.tooltip = `${item.command}`;
         treeItem.collapsibleState = 1;
         treeItem.type = "label";
         treeItem.pid = item.pid;
         return treeItem;
       });
-      if (element && element.type === "label") {
-        const { pid } = element;
-        const processRes = shelljs
-          .exec(`lsof -nP | grep LISTEN | grep ${pid}`)
-          .toString();
-        console.log(
-          "⭐️⭐️Thlnking⭐️⭐️%c line-50 [processRes]->",
-          "color:#fc6528",
-          processRes
-        );
 
-        return [new vscode.TreeItem(element.tooltip)];
+      if (element && element.type === "label") {
+        return [
+          new vscode.TreeItem(`command: ${element.tooltip}`),
+          new vscode.TreeItem(`pid: ${element.pid}`),
+        ];
       }
-      return [].concat(itemArr);
+      return [].concat(npmProcessItemArr);
     },
     getTreeItem: (element) => {
       return element;

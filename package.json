@@ -28,7 +28,7 @@
       "process-explorer": [
         {
           "id": "NPM",
-          "name": "npm-process"
+          "name": "webpack-process"
         },
         {
           "id": "XBB-DEV",
