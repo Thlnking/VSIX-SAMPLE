@@ -111,4 +111,90 @@ const viewNPMDataProvider = () => {
   };
 };
 
-module.exports = viewNPMDataProvider;
+const getXbbDevProcessMsgArr = () => {
+  const xbbDevProcesses = shelljs
+    .exec("ps au | grep node | grep xbb-dev")
+    .toString()
+    .split("\n")
+    .filter((item) => !!item.trim());
+
+  const xbbDevProcessesMsgArr = xbbDevProcesses
+    .map((item) => {
+      const parseArr = item.split(" ").filter((itm) => !!itm.trim());
+      return {
+        command: parseArr.slice(10).join(" "),
+        pid: parseArr[1],
+        startTime: parseArr[8],
+      };
+    })
+    .filter((item) => !!item);
+  return xbbDevProcessesMsgArr;
+};
+
+const getXbbDevServerUrl = (ProcessMsgArr) => {
+  const xbbDevServerUrl = ProcessMsgArr.map((item) => {
+    const { pid, command } = item;
+    const lsofRes = shelljs
+      .exec(`lsof -nP | grep ${pid} | grep LISTEN`)
+      .toString();
+    const portMsgArr = lsofRes.split(" ").filter((item) => !!item.trim());
+    const port = portMsgArr[portMsgArr.length - 2].split(":")[1];
+    return {
+      url: `http://${getIP()}:${port}`,
+      pid,
+      command,
+    };
+  });
+  return xbbDevServerUrl;
+};
+const viewXbbDevDataProvider = () => {
+  return {
+    getChildren: (element) => {
+      const processesMsgArr = getXbbDevProcessMsgArr();
+      const urlArr = getXbbDevServerUrl(processesMsgArr);
+      const npmProcessItemArr = urlArr.map((item) => {
+        const treeItem = new vscode.TreeItem(`${item.url}`);
+        treeItem.iconPath = path.join(
+          __filename,
+          "..",
+          "..",
+          "..",
+          "media",
+          "icon-dark.svg"
+        );
+        treeItem.tooltip = `${item.command}`;
+        treeItem.collapsibleState = 1;
+        treeItem.type = "label";
+        treeItem.pid = item.pid;
+        return treeItem;
+      });
+
+      if (element && element.type === "label") {
+        return [
+          new vscode.TreeItem(`command: ${element.tooltip}`),
+          new vscode.TreeItem(`pid: ${element.pid}`),
+        ];
+      }
+
+      console.log(
+        "⭐️⭐️Thlnking⭐️⭐️%c line-192 [npmProcessItemArr]->",
+        "color:#fc6528",
+        npmProcessItemArr
+      );
+
+      return [].concat(npmProcessItemArr);
+    },
+    getTreeItem: (element) => {
+      return element;
+    },
+    getParent: (element) => {
+      return element;
+    },
+    refresh: () => {},
+  };
+};
+
+module.exports = {
+  viewNPMDataProvider,
+  viewXbbDevDataProvider,
+};

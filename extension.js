@@ -5,7 +5,10 @@ const gitUser = require("./src/git_message/git_user");
 const gitStatusBarItem = require("./src/status_bar_item/index");
 const insertVariable = require("./src/insert_variable");
 const nvmStatusBarItem = require("./src/nvm_status");
-const viewNPMDataProvider = require("./src/process_view_container");
+const {
+  viewNPMDataProvider,
+  viewXbbDevDataProvider,
+} = require("./src/process_view_container");
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 /**
@@ -48,6 +51,18 @@ function activate(context) {
     const view = vscode.window.registerTreeDataProvider(
       "NPM",
       viewNPMDataProvider()
+    );
+    context.subscriptions.push(view);
+  });
+  vscode.commands.registerCommand("XBB_DEV.refreshEntry", () => {
+    console.log(
+      "⭐️⭐️Thlnking⭐️⭐️%c line-58 [XBB_DEV.refreshEntry]->",
+      "color:#fc6528"
+    );
+
+    const view = vscode.window.registerTreeDataProvider(
+      "XBB_DEV",
+      viewXbbDevDataProvider()
     );
     context.subscriptions.push(view);
   });
