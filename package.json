@@ -51,7 +51,7 @@
       ],
       "view/item/context": [
         {
-          "command": "XBB_DEV.refreshEntry",
+          "command": "url_path.open_in_browser",
           "group": "inline"
         }
       ]
@@ -82,6 +82,10 @@
           "light": "media/icon-dark.svg",
           "dark": "media/icon-light.svg"
         }
+      },
+      {
+        "command": "url_path.open_in_browser",
+        "title": "OpenInBrowser"
       }
     ],
     "keybindings": [
@@ -115,6 +119,7 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
+    "find-process": "^1.4.7",
     "ini": "^3.0.1",
     "opn": "^6.0.0",
     "shelljs": "^0.8.5"
