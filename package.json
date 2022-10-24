@@ -48,6 +48,12 @@
           "group": "navigation@1",
           "when": "view == XBB_DEV"
         }
+      ],
+      "view/item/context": [
+        {
+          "command": "XBB_DEV.refreshEntry",
+          "group": "inline"
+        }
       ]
     },
     "commands": [
@@ -110,6 +116,7 @@
   },
   "dependencies": {
     "ini": "^3.0.1",
+    "opn": "^6.0.0",
     "shelljs": "^0.8.5"
   }
 }
