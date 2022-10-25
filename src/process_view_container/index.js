@@ -3,6 +3,10 @@ const path = require("path");
 const shelljs = require("shelljs");
 
 const interfaces = require("os").networkInterfaces(); //服务器本机地址
+const {
+  generateWebpackDevServerProcessMap,
+  generateTreeItem,
+} = require("./utils");
 const getIP = () => {
   let IPAdress = "";
 
@@ -24,50 +28,19 @@ const getIP = () => {
   }
 };
 
-const getNPMWebpackProcessesMsgArr = () => {
-  const npmWebpackProcesses = shelljs
-    .exec("ps au | grep node | grep webpack | grep dev")
-    .toString()
-    .split("\n")
-    .filter((item) => !!item.trim());
-  const npmWebpackProcessesMsgArr = npmWebpackProcesses
-    .map((item) => {
-      const parseArr = item.split(" ").filter((itm) => !!itm.trim());
-      return {
-        command: parseArr.slice(10).join(" "),
-        pid: parseArr[1],
-        startTime: parseArr[8],
-      };
-    })
-    .filter((item) => !!item);
-  return npmWebpackProcessesMsgArr;
-};
-
-const getWebpackDevServerUrl = (ProcessMsgArr) => {
-  const npmWebpackDevServerUrl = ProcessMsgArr.map((item) => {
-    const { pid, command } = item;
-    const lsofRes = shelljs
-      .exec(`lsof -nP | grep ${pid} | grep LISTEN`)
-      .toString();
-    const portMsgArr = lsofRes.split(" ").filter((item) => !!item.trim());
-    const port = portMsgArr[portMsgArr.length - 2].split(":")[1];
-    return {
-      url: `http://${getIP()}:${port}`,
-      pid,
-      command,
-    };
-  });
-  return npmWebpackDevServerUrl;
-};
-
 const viewNPMDataProvider = () => {
+  const processMap = generateWebpackDevServerProcessMap();
+
   return {
     getChildren: (element) => {
-      const processesMsgArr = getNPMWebpackProcessesMsgArr();
+      console.log(
+        "⭐️⭐️Thlnking⭐️⭐️%c line-87 [processMap]->",
+        "color:#fc6528",
+        [...processMap.keys()]
+      );
 
-      const urlArr = getWebpackDevServerUrl(processesMsgArr);
-      const npmProcessItemArr = urlArr.map((item) => {
-        const treeItem = new vscode.TreeItem(`${item.url}`);
+      const tabs = [...processMap.keys()].map((item) => {
+        const treeItem = new vscode.TreeItem(`${item}`);
         treeItem.iconPath = path.join(
           __filename,
           "..",
@@ -76,20 +49,17 @@ const viewNPMDataProvider = () => {
           "media",
           "icon-dark.svg"
         );
-        treeItem.tooltip = `${item.command}`;
         treeItem.collapsibleState = 1;
-        treeItem.type = "label";
-        treeItem.pid = item.pid;
+        treeItem.type = "tab";
         return treeItem;
       });
+      console.log(
+        "⭐️⭐️Thlnking⭐️⭐️%c line-113 [tabs]->",
+        "color:#fc6528",
+        tabs
+      );
 
-      if (element && element.type === "label") {
-        return [
-          new vscode.TreeItem(`command: ${element.tooltip}`),
-          new vscode.TreeItem(`pid: ${element.pid}`),
-        ];
-      }
-      return [].concat(npmProcessItemArr);
+      return [].concat(tabs);
     },
     getTreeItem: (element) => {
       return element;
