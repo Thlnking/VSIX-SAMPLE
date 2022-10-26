@@ -52,7 +52,8 @@
       "view/item/context": [
         {
           "command": "url_path.open_in_browser",
-          "group": "inline"
+          "group": "inline",
+          "when": "viewItem == url"
         }
       ]
     },

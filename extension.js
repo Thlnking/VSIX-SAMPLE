@@ -9,7 +9,19 @@ const {
   viewNPMDataProvider,
   viewXbbDevDataProvider,
 } = require("./src/process_view_container");
-const find = require("find-process");
+const opn = require("opn");
+
+const open = (path) => {
+  // const name = browser ? browser : standardizedBrowserName(defaultBrowser());
+  // const name = standardizedBrowserName(browser);
+  // console.log('path: ', path, ' name: ', name);
+  opn(path).catch((_) => {
+    vscode.window.showErrorMessage(
+      `Open browser failed!! Please check if you have installed the browser correctly!`
+    );
+  });
+};
+
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 /**
@@ -71,24 +83,7 @@ function activate(context) {
   const openInBrowserCommand = vscode.commands.registerCommand(
     "url_path.open_in_browser",
     async (args) => {
-      console.log(
-        "⭐️⭐️Thlnking⭐️⭐️%c line-72 [args]->",
-        "color:#fc6528",
-        args
-      );
-      const pid = Number(args.pid);
-      console.log(
-        "⭐️⭐️Thlnking⭐️⭐️%c line-80 [pid]->",
-        "color:#fc6528",
-        typeof pid,
-        pid
-      );
-      const curProcess = await find("pid", pid);
-      console.log(
-        "⭐️⭐️Thlnking⭐️⭐️%c line-87 [curProcess]->",
-        "color:#fc6528",
-        curProcess.cwd()
-      );
+      open(args.label);
     }
   );
   context.subscriptions.push(openInBrowserCommand);

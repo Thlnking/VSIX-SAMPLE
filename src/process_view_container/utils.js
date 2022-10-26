@@ -4,7 +4,7 @@ const shelljs = require("shelljs");
 
 const interfaces = require("os").networkInterfaces(); //服务器本机地址
 
-const processMap = new Map();
+let processMap = new Map();
 
 const getIP = () => {
   let IPAdress = "";
@@ -87,32 +87,39 @@ const getGitBranch = (cwd) => {
 const collectWebpackDevServerProcessMap = (processMsgArr) => {
   const ip = getIP();
   processMsgArr.forEach((item) => {
-    const { pid } = item;
+    const { pid, command } = item;
     const processURL = getProcessURL(pid, ip);
     const processCWD = getProcessCWD(pid);
     const processGitBranch = getGitBranch(processCWD);
     if (processMap.has(processCWD)) {
-      processMap.set(processCWD, [
-        ...processMap.get(processCWD),
-        {
-          url: processURL,
-          branch: processGitBranch,
-          pid,
-        },
-      ]);
+      processMap.set(processCWD, {
+        branch: processGitBranch,
+        urlArr: [
+          ...processMap.get(processCWD).urlArr,
+          {
+            url: processURL,
+            pid,
+            command,
+          },
+        ],
+      });
     } else {
-      processMap.set(processCWD, [
-        {
-          url: processURL,
-          branch: processGitBranch,
-          pid,
-        },
-      ]);
+      processMap.set(processCWD, {
+        branch: processGitBranch,
+        urlArr: [
+          {
+            url: processURL,
+            pid,
+            command,
+          },
+        ],
+      });
     }
   });
 };
 
 const generateWebpackDevServerProcessMap = () => {
+  processMap = new Map();
   const webpackDevServerPIDs = collectWebpackDevServerPIDs();
   collectWebpackDevServerProcessMap(webpackDevServerPIDs);
   return processMap;

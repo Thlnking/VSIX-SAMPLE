@@ -1,12 +1,11 @@
 const vscode = require("vscode");
 const path = require("path");
 const shelljs = require("shelljs");
+const os = require("os");
+console.log("⭐️⭐️Thlnking⭐️⭐️%c line-5 [os]->", "color:#fc6528", os);
 
 const interfaces = require("os").networkInterfaces(); //服务器本机地址
-const {
-  generateWebpackDevServerProcessMap,
-  generateTreeItem,
-} = require("./utils");
+const { generateWebpackDevServerProcessMap } = require("./utils");
 const getIP = () => {
   let IPAdress = "";
 
@@ -33,33 +32,49 @@ const viewNPMDataProvider = () => {
 
   return {
     getChildren: (element) => {
-      console.log(
-        "⭐️⭐️Thlnking⭐️⭐️%c line-87 [processMap]->",
-        "color:#fc6528",
-        [...processMap.keys()]
-      );
+      if (!element) {
+        const tabs = [...processMap.keys()].map((item) => {
+          const treeItem = new vscode.TreeItem(`${item}`);
+          treeItem.iconPath = path.join(
+            __filename,
+            "..",
+            "..",
+            "..",
+            "media",
+            "icon-dark.svg"
+          );
+          treeItem.collapsibleState = 1;
+          treeItem.tooltip = `当前分支：${processMap.get(item).branch}`;
+          treeItem.type = "tab";
+          treeItem.contextValue = "tab";
+          treeItem.data = processMap.get(item);
+          return treeItem;
+        });
 
-      const tabs = [...processMap.keys()].map((item) => {
-        const treeItem = new vscode.TreeItem(`${item}`);
-        treeItem.iconPath = path.join(
-          __filename,
-          "..",
-          "..",
-          "..",
-          "media",
-          "icon-dark.svg"
-        );
-        treeItem.collapsibleState = 1;
-        treeItem.type = "tab";
-        return treeItem;
-      });
-      console.log(
-        "⭐️⭐️Thlnking⭐️⭐️%c line-113 [tabs]->",
-        "color:#fc6528",
-        tabs
-      );
+        return [].concat(tabs);
+      }
 
-      return [].concat(tabs);
+      if (element.type === "tab") {
+        const urlItems = element.data.urlArr.map((item) => {
+          const treeItem = new vscode.TreeItem(`${item.url}`);
+          treeItem.contextValue = "url";
+          treeItem.type = "url";
+          treeItem.desc = {
+            pid: item.pid,
+            command: item.command,
+          };
+          treeItem.collapsibleState = 1;
+          return treeItem;
+        });
+        return [].concat(urlItems);
+      }
+
+      if (element.type === "url") {
+        return [
+          new vscode.TreeItem(`PID: ${element.desc.pid}`),
+          new vscode.TreeItem(`CMD: ${element.desc.command}`),
+        ];
+      }
     },
     getTreeItem: (element) => {
       return element;
