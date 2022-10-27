@@ -6,7 +6,7 @@ const gitStatusBarItem = require("./src/status_bar_item/index");
 const insertVariable = require("./src/insert_variable");
 const nvmStatusBarItem = require("./src/nvm_status");
 const {
-  viewNPMDataProvider,
+  viewWebpackDataProvider,
   viewXbbDevDataProvider,
 } = require("./src/process_view_container");
 const opn = require("opn");
@@ -63,16 +63,11 @@ function activate(context) {
   vscode.commands.registerCommand("NPM.refreshEntry", () => {
     const view = vscode.window.registerTreeDataProvider(
       "NPM",
-      viewNPMDataProvider()
+      viewWebpackDataProvider()
     );
     context.subscriptions.push(view);
   });
   vscode.commands.registerCommand("XBB_DEV.refreshEntry", () => {
-    console.log(
-      "⭐️⭐️Thlnking⭐️⭐️%c line-58 [XBB_DEV.refreshEntry]->",
-      "color:#fc6528"
-    );
-
     const view = vscode.window.registerTreeDataProvider(
       "XBB_DEV",
       viewXbbDevDataProvider()

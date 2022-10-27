@@ -1,10 +1,6 @@
-const vscode = require("vscode");
-const path = require("path");
 const shelljs = require("shelljs");
 
 const interfaces = require("os").networkInterfaces(); //服务器本机地址
-
-let processMap = new Map();
 
 const getIP = () => {
   let IPAdress = "";
@@ -38,6 +34,28 @@ const collectWebpackDevServerPIDs = () => {
 
   // 将相关的进程列表中的重要信息解析成对象
   return webpackProcesses
+    .map((item) => {
+      const parseArr = item.split(" ").filter((itm) => !!itm.trim());
+      return {
+        command: parseArr.slice(10).join(" "),
+        pid: parseArr[1],
+        startTime: parseArr[8],
+      };
+    })
+    .filter((item) => !!item);
+};
+
+// 获取xbb-dev的的devServer 的进程相关信息
+const collectXbbDevServerPIDs = () => {
+  // 执行shell命令获取到xbb-dev-server的进程相关信息的解析数组
+  const xbbDevProcess = shelljs
+    .exec("ps au | grep node | grep xbb-dev")
+    .toString()
+    .split("\n")
+    .filter((item) => !!item.trim());
+
+  // 将相关的进程列表中的重要信息解析成对象
+  return xbbDevProcess
     .map((item) => {
       const parseArr = item.split(" ").filter((itm) => !!itm.trim());
       return {
@@ -84,7 +102,9 @@ const getGitBranch = (cwd) => {
 };
 
 // 对进程的信息映射进行收集并且存储到processMap中
-const collectWebpackDevServerProcessMap = (processMsgArr) => {
+const collectServerProcessMap = (processMsgArr) => {
+  const processMap = new Map();
+
   const ip = getIP();
   processMsgArr.forEach((item) => {
     const { pid, command } = item;
@@ -116,18 +136,25 @@ const collectWebpackDevServerProcessMap = (processMsgArr) => {
       });
     }
   });
+
+  return processMap;
 };
 
-const generateWebpackDevServerProcessMap = () => {
-  processMap = new Map();
+const generateWebpackProcessMap = () => {
   const webpackDevServerPIDs = collectWebpackDevServerPIDs();
-  collectWebpackDevServerProcessMap(webpackDevServerPIDs);
-  return processMap;
+  const webpackProcessMap = collectServerProcessMap(webpackDevServerPIDs);
+  return webpackProcessMap;
+};
+const generateXbbDevProcessMap = () => {
+  const xbbDevServerPIDs = collectXbbDevServerPIDs();
+  const xbbDevProcessMap = collectServerProcessMap(xbbDevServerPIDs);
+  return xbbDevProcessMap;
 };
 
 const generateTreeItem = (label, iconPath, collapsibleState, type) => {};
 
 module.exports = {
-  generateWebpackDevServerProcessMap,
+  generateWebpackProcessMap,
+  generateXbbDevProcessMap,
   generateTreeItem,
 };
